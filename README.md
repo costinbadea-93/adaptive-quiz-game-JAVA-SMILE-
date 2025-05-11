@@ -21,20 +21,25 @@ adaptive-quiz-game/<br>
 │── README.md                      # Project documentation<br>
 
 
-Installation & Setup:
+**Installation & Setup:**
 
 1. Clone the Repository
-- git clone https://github.com/your-username/adaptive-quiz-game.git
-- cd adaptive-quiz-game
+- git [clone https://github.com/your-username/adaptive-quiz-game.git](https://github.com/costinbadea-93/adaptive-quiz-game-JAVA-SMILE-.git)
+- cd adaptive-quiz-game-JAVA-SMILE-
+
+2. Compile & Run
+mvn clean install
+mvn exec:java -Dexec.mainClass="QuizGame"
 
 
-Usage
+
+**Usage<br>**
 - Start the game and answer quiz questions.
 - Machine Learning (KNN) adjusts difficulty based on your responses.
 - Score is tracked, and difficulty adapts dynamically.
 
 
-Example Code
+**Example code<br>**
 Adaptive Difficulty (KNN)
 import smile.classification.KNN;
 import java.util.ArrayList;
