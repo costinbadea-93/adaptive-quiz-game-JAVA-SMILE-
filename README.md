@@ -1,13 +1,24 @@
-Here's a GitHub README for your Java Adaptive Quiz Game using SMILE Machine Learning:
+**Here's a GitHub README for your Java Adaptive Quiz Game using SMILE Machine Learning:**
 
 Adaptive Quiz Game (Java + SMILE)
 A Java-based quiz game that dynamically adjusts difficulty using machine learning (K-Nearest Neighbors - KNN) from the SMILE library. The game features a Swing-based UI and adapts questions based on user performance, but also has an command line runner interface.
 
-Features<BR>
+**Features:<BR>**
 ✅ Adaptive Difficulty using KNN Machine Learning<BR>
 ✅ Randomized Questions from a predefined question bank<BR>
 ✅ Swing-based UI for an interactive experience<BR>
 ✅ Tracks User Performance and adjusts difficulty dynamicall<BR>
+
+**Project Structure<br>**
+adaptive-quiz-game/<br>
+│── src/<br>
+│   ├── main/java/<br>
+│   │   ├── Question.java          # Represents a quiz question<br>
+│   │   ├── QuestionBank.java      # Stores and retrieves questions<br>
+│   │   ├── KNNAdaptiveDifficulty.java # Machine Learning (KNN-based difficulty)<br>
+│   │   ├── QuizGame.java          # Swing-based UI for the quiz<br>
+│── pom.xml                        # Maven dependencies<br>
+│── README.md                      # Project documentation<br>
 
 
 Installation & Setup:
@@ -62,5 +73,3 @@ public class KNNAdaptiveDifficulty {
     }
 }
 
-Contributing
-Feel free to fork this repository, submit pull requests, or report issues.
