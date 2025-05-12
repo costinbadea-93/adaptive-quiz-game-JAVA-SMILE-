@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.Arrays;
 import java.util.Scanner;
 import javax.swing.*;
@@ -8,92 +9,132 @@ import java.util.List;
 
 
 public class QuizGame extends JFrame {
-        private QuestionBank questionBank;
-        private AdaptiveDifficulty adaptiveDifficulty;
-        private List<Question> questions;
-        private int currentQuestionIndex = 0;
-        private int score = 0;
+    private QuestionBank questionBank;
+    private AdaptiveDifficulty adaptiveDifficulty;
+    private List<Question> questions;
+    private int currentQuestionIndex = 0;
+    private int score = 0;
 
-        private JLabel questionLabel;
-        private JRadioButton[] options;
-        private ButtonGroup group;
-        private JButton nextButton;
+    private JLabel questionLabel;
+    private JRadioButton[] options;
+    private ButtonGroup group;
+    private JButton nextButton;
+    private JLabel scoringLabel;
 
-        public QuizGame() {
-            questionBank = new QuestionBank();
-            adaptiveDifficulty = new AdaptiveDifficulty(questionBank.getQuestions());
-            questions = questionBank.getQuestions();
+    private int predictedDifficulty ;
+    private Question question;
 
-            setTitle("Adaptive Quiz Game");
-            setSize(800, 400);
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setLayout(new GridLayout(6, 1));
+    private static final String scoringTemplate = "Score: %s, KNN-Algorithm prediction level: %s, question difficulty level: %s";
 
-            questionLabel = new JLabel();
-            add(questionLabel);
+//    public void moveHumanCloser() {
+//        if (humanX + 50 < planetX) {
+//            humanX += 50; // Move closer
+//        }
+//        repaint(); // Redraw the panel
+//    }
 
-            options = new JRadioButton[4];
-            group = new ButtonGroup();
-            for (int i = 0; i < 4; i++) {
-                options[i] = new JRadioButton();
-                group.add(options[i]);
-                add(options[i]);
+    public QuizGame() {
+        questionBank = new QuestionBank();
+        adaptiveDifficulty = new AdaptiveDifficulty(questionBank.getQuestions());
+        questions = questionBank.getQuestions();
+
+        predictedDifficulty = adaptiveDifficulty.predictDifficulty(score);
+        question = questionBank
+                .getQuestions()
+                .stream()
+                //to review this - it can take a top hard question difficulty :))
+                .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
+                .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
+
+
+        setTitle("Adaptive Quiz Game");
+        setSize(1600, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new GridLayout(8, 1));
+
+
+//        ImageIcon icon = new ImageIcon("planet.jpg");
+//        JLabel picture = new JLabel(icon);
+//        picture.setSize(10, 10);
+//        add(picture);
+
+
+        scoringLabel = new JLabel(String.format(scoringTemplate,score, predictedDifficulty, question.getDifficulty()));
+        scoringLabel.setFont(new Font("Arial", Font.BOLD, 30));
+        scoringLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(scoringLabel);
+
+        questionLabel = new JLabel();
+        questionLabel.setFont(new Font("Arial", Font.BOLD, 30));
+
+        add(questionLabel);
+
+        options = new JRadioButton[4];
+        group = new ButtonGroup();
+
+        for (int i = 0; i < 4; i++) {
+            options[i] = new JRadioButton();
+            options[i].setFont(new Font("Arial", Font.BOLD, 20));
+            group.add(options[i]);
+            add(options[i]);
+        }
+
+        nextButton = new JButton("Next");
+        nextButton.addActionListener(e -> {
+            checkAnswer();
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.size()) {
+                predictedDifficulty = adaptiveDifficulty.predictDifficulty(score);
+                question = questionBank
+                        .getQuestions()
+                        .stream()
+                        //to review this - it can take a top hard question difficulty :))
+                        .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
+                        .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
+                loadQuestion();
+                scoringLabel.setText(String.format(scoringTemplate,score, predictedDifficulty, question.getDifficulty()));
+            } else {
+                showResults();
             }
+            group.clearSelection();
+        });
+        add(nextButton);
 
-            nextButton = new JButton("Next");
-            nextButton.addActionListener(e -> {
-                checkAnswer();
-                currentQuestionIndex++;
-                if (currentQuestionIndex < questions.size()/2) {
-                    loadQuestion();
-                } else {
-                    showResults();
-                }
-            });
-            add(nextButton);
+        loadQuestion();
+        setVisible(true);
+    }
 
-            loadQuestion();
-            setVisible(true);
+    private void loadQuestion() {
+        System.out.println("Question difficulty: " + question.getDifficulty());
+        questionLabel.setText(question.getQuestionText());
+        String[] opts = question.getOptions();
+        String [] prefixes = {"a)", "b)", "c)", "d)"};
+        for (int i = 0; i < opts.length; i++) {
+            options[i].setText(prefixes[i] + " " + opts[i]);
+            options[i].setSelected(false);
+            options[i].setRolloverEnabled(false);
         }
+    }
 
-        private void loadQuestion() {
-            int predictedDifficulty = adaptiveDifficulty.predictDifficulty(score);
-            Question question = questionBank
-                    .getQuestions()
-                    .stream()
-                    //to review this - it can take a top hard question difficulty :))
-                    .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
-                    .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
-
-            System.out.println("Question difficulty: " + question.getDifficulty());
-            questionLabel.setText(question.getQuestionText());
-            String[] opts = question.getOptions();
-            for (int i = 0; i < opts.length; i++) {
-                options[i].setText(opts[i]);
-                options[i].setSelected(false);
+    private void checkAnswer() {
+        for (int i = 0; i < options.length; i++) {
+            if (options[i].isSelected() && i == question.getCorrectAnswerIndex()) {
+                score++;
+                question.setAlreadyAnswered(true);
+                return;
             }
         }
+        question.setAlreadyAnswered(true);
+    }
 
-        private void checkAnswer() {
-            Question q = questions.get(currentQuestionIndex);
-            for (int i = 0; i < options.length; i++) {
-                if (options[i].isSelected() && i == q.getCorrectAnswerIndex()) {
-                    score++;
-                    q.setAlreadyAnswered(true);
-                    return;
-                }
-            }
-            q.setAlreadyAnswered(true);
-        }
+    private void showResults() {
+        JOptionPane.showMessageDialog(this, "Quiz Over! Your score: " + score);
+        System.exit(0);
+    }
 
-        private void showResults() {
-            JOptionPane.showMessageDialog(this, "Quiz Over! Your score: " + score);
-            System.exit(0);
-        }
-
-        public static void main(String[] args) {
-            new QuizGame();
-        }
+    public static void main(String[] args) {
+        new QuizGame();
+    }
 
 /** Command line runner (without a graphic interface **/
 

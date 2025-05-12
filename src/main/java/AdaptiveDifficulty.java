@@ -43,7 +43,7 @@ public class AdaptiveDifficulty {
          *
          *  It takes a dataset of feature vectors and their corresponding labels, then builds a model that can classify new data points based on their similarity to existing ones.
          */
-        knnModel = KNN.fit(features, labels, 3);
+        knnModel = KNN.fit(features, labels, 1);
     }
 
     public int predictDifficulty(int score) {
@@ -52,7 +52,7 @@ public class AdaptiveDifficulty {
          * and the second one is question difficulty;
          * predict based on (score, question difficulty
          */
-        double[] input = {score, 1};
+        double[] input = {score, 2};
         return knnModel.predict(input);
     }
 }
