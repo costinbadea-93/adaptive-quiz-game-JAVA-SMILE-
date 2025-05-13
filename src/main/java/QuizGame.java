@@ -1,10 +1,5 @@
-import java.io.File;
-import java.util.Arrays;
-import java.util.Scanner;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 
@@ -20,18 +15,12 @@ public class QuizGame extends JFrame {
     private ButtonGroup group;
     private JButton nextButton;
     private JLabel scoringLabel;
+    JLabel humanPicture;
 
     private int predictedDifficulty ;
     private Question question;
 
     private static final String scoringTemplate = "Score: %s, KNN-Algorithm prediction level: %s, question difficulty level: %s";
-
-//    public void moveHumanCloser() {
-//        if (humanX + 50 < planetX) {
-//            humanX += 50; // Move closer
-//        }
-//        repaint(); // Redraw the panel
-//    }
 
     public QuizGame() {
         questionBank = new QuestionBank();
@@ -50,13 +39,20 @@ public class QuizGame extends JFrame {
         setTitle("Adaptive Quiz Game");
         setSize(1600, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(8, 1));
+        setLayout(new GridLayout(7, 1));
 
-
-//        ImageIcon icon = new ImageIcon("planet.jpg");
-//        JLabel picture = new JLabel(icon);
-//        picture.setSize(10, 10);
+//        ImageIcon mainIcon = new ImageIcon("planet.jpg");
+//        Image icon = mainIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+//        ImageIcon resizedIcon = new ImageIcon(icon);
+//        JLabel picture = new JLabel(resizedIcon);
 //        add(picture);
+//
+//
+//        ImageIcon mainHumanIcon = new ImageIcon("human.png");
+//        Image humanIcon = mainHumanIcon.getImage().getScaledInstance(100, 80, Image.SCALE_SMOOTH);
+//        ImageIcon resizedHumanIcon = new ImageIcon(humanIcon);
+//        humanPicture = new JLabel(resizedHumanIcon);
+//        add(humanPicture);
 
 
         scoringLabel = new JLabel(String.format(scoringTemplate,score, predictedDifficulty, question.getDifficulty()));
