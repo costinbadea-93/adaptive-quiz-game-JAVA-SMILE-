@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class QuizGame extends JFrame {
@@ -19,6 +20,7 @@ public class QuizGame extends JFrame {
 
     private int predictedDifficulty ;
     private Question question;
+    AtomicInteger initialXBound = new AtomicInteger(100);
 
     private static final String scoringTemplate = "Score: %s, KNN-Algorithm prediction level: %s, question difficulty level: %s";
 
@@ -34,49 +36,58 @@ public class QuizGame extends JFrame {
                 //to review this - it can take a top hard question difficulty :))
                 .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
                 .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
-
+        System.out.println(System.getProperty("user.dir"));
 
         setTitle("Adaptive Quiz Game");
         setSize(1600, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(7, 1));
+//        setLayout(new GridLayout(7, 1));
+        setLayout(null);
 
-//        ImageIcon mainIcon = new ImageIcon("planet.jpg");
-//        Image icon = mainIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-//        ImageIcon resizedIcon = new ImageIcon(icon);
-//        JLabel picture = new JLabel(resizedIcon);
-//        add(picture);
-//
-//
-//        ImageIcon mainHumanIcon = new ImageIcon("human.png");
-//        Image humanIcon = mainHumanIcon.getImage().getScaledInstance(100, 80, Image.SCALE_SMOOTH);
-//        ImageIcon resizedHumanIcon = new ImageIcon(humanIcon);
-//        humanPicture = new JLabel(resizedHumanIcon);
-//        add(humanPicture);
+        ImageIcon mainIcon = new ImageIcon("planet.jpg");
+        Image icon = mainIcon.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(icon);
+        JLabel picture = new JLabel(resizedIcon);
+        picture.setBounds(700, 100, 100, 100);
+        add(picture);
+
+
+        ImageIcon mainHumanIcon = new ImageIcon("human.png");
+        Image humanIcon = mainHumanIcon.getImage().getScaledInstance(100, 80, Image.SCALE_SMOOTH);
+        ImageIcon resizedHumanIcon = new ImageIcon(humanIcon);
+        humanPicture = new JLabel(resizedHumanIcon);
+        humanPicture.setBounds(initialXBound.get(), 100, 100, 100);
+        add(humanPicture);
 
 
         scoringLabel = new JLabel(String.format(scoringTemplate,score, predictedDifficulty, question.getDifficulty()));
         scoringLabel.setFont(new Font("Arial", Font.BOLD, 30));
         scoringLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        scoringLabel.setBounds(100, 0, getWidth(), 50);
         add(scoringLabel);
 
         questionLabel = new JLabel();
         questionLabel.setFont(new Font("Arial", Font.BOLD, 30));
 
+        questionLabel.setBounds(100, 250, getWidth(), 50);
         add(questionLabel);
 
         options = new JRadioButton[4];
         group = new ButtonGroup();
 
+        int initialOptionY = 300;
         for (int i = 0; i < 4; i++) {
             options[i] = new JRadioButton();
             options[i].setFont(new Font("Arial", Font.BOLD, 20));
+            options[i].setBounds(100, initialOptionY, getWidth(), 50);
+            initialOptionY += 50;
             group.add(options[i]);
             add(options[i]);
         }
 
         nextButton = new JButton("Next");
         nextButton.addActionListener(e -> {
+
             checkAnswer();
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.size()) {
@@ -90,10 +101,12 @@ public class QuizGame extends JFrame {
                 loadQuestion();
                 scoringLabel.setText(String.format(scoringTemplate,score, predictedDifficulty, question.getDifficulty()));
             } else {
+                scoringLabel.setText(String.format(scoringTemplate,score, predictedDifficulty, question.getDifficulty()));
                 showResults();
             }
             group.clearSelection();
         });
+        nextButton.setBounds(100, 600, getWidth(), 50);
         add(nextButton);
 
         loadQuestion();
@@ -115,6 +128,8 @@ public class QuizGame extends JFrame {
     private void checkAnswer() {
         for (int i = 0; i < options.length; i++) {
             if (options[i].isSelected() && i == question.getCorrectAnswerIndex()) {
+                initialXBound.set(initialXBound.get() + 55);
+                humanPicture.setBounds(initialXBound.get(), 100, 100, 100);
                 score++;
                 question.setAlreadyAnswered(true);
                 return;
@@ -124,8 +139,13 @@ public class QuizGame extends JFrame {
     }
 
     private void showResults() {
-        JOptionPane.showMessageDialog(this, "Quiz Over! Your score: " + score);
-        System.exit(0);
+        if(score == 10 ){
+            JOptionPane.showMessageDialog(this, "Quiz Over! Congratulation you have reach AI planet! Your score: " + score + " !");
+            System.exit(0);
+        }else{
+            JOptionPane.showMessageDialog(this, "Quiz Over! Try again to reach AI planet! Your score: " + score + " !");
+            System.exit(0);
+        }
     }
 
     public static void main(String[] args) {
