@@ -10,7 +10,7 @@ public class QuestionBank {
     }
 
     private void loadQuestions() {
-        questions.add(new Question("Number of primitive data types in Java are?", new String[]{"6", "7", "8", "9"}, 2, 1, false));
+        questions.add(new Question("Number of primitive data types in Java are?", new String[]{"6(int,long,float,double,char,boolean)", "7(int,long,float,double,char,boolean,byte)", "8(int,long,float,double,char,boolean,byte,short)", "9(int,long,float,double,char,boolean,byte,short,times)"}, 2, 1, false));
         questions.add(new Question("Which component of Java is responsible for running the compiled Java bytecode?", new String[]{"JDK", "JVM", "JRE", "JIT"}, 1, 2, false));
         questions.add(new Question("What is the purpose of the PATH environment variable in Java?", new String[]{"To locate Java libraries", "To store Java bytecode", "To Locate the exe files (.exe)", "To optimize Java code"}, 2, 2, false));
         questions.add(new Question("Which feature of Java makes it possible to run a Java program on different platforms?", new String[]{"Object-Oriented", "Platform-Independent", "Syntax", "Memory Management"}, 1, 2, false));
