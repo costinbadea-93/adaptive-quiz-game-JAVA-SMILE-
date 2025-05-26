@@ -12,10 +12,12 @@ public class AdaptiveDifficulty {
     }
 
     private void trainModel() {
-        double[][] features = new double[questions.size()][2]; // [score, difficulty]
-        int[] labels = new int[questions.size()]; // Difficulty level
+//        int rows = questions.size();
+        int rows = 10;
+        double[][] features = new double[rows][2]; // [score, difficulty]
+        int[] labels = new int[rows]; // Difficulty level
 
-        for (int i = 0; i < questions.size(); i++) {
+        for (int i = 0; i < rows; i++) {
             features[i][0] = i; // Simulated user score
             features[i][1] = questions.get(i).getDifficulty();
             labels[i] = questions.get(i).getDifficulty();

@@ -1,7 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 
 public class QuizGame extends JFrame {
@@ -30,13 +32,24 @@ public class QuizGame extends JFrame {
         questions = questionBank.getQuestions();
 
         predictedDifficulty = adaptiveDifficulty.predictDifficulty(score);
-        question = questionBank
+//        question = questionBank
+//                .getQuestions()
+//                .stream()
+//                //to review this - it can take a top hard question difficulty :))
+//                .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
+//                .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
+//        System.out.println(System.getProperty("user.dir"));
+        List<Question> newQuestions0 = questionBank
                 .getQuestions()
                 .stream()
                 //to review this - it can take a top hard question difficulty :))
-                .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
-                .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
-        System.out.println(System.getProperty("user.dir"));
+                .filter(q -> q.getDifficulty() == predictedDifficulty && !q.isAlreadyAnswered())
+                .toList();
+
+        Random random0 = new Random();
+        int number0 = random0.nextInt((newQuestions0.size())); // see explanation below
+        question = newQuestions0.get(number0);
+
 
         setTitle("Adaptive Quiz Game");
         setSize(1600, 800);
@@ -90,14 +103,26 @@ public class QuizGame extends JFrame {
 
             checkAnswer();
             currentQuestionIndex++;
-            if (currentQuestionIndex < questions.size()) {
+//            if (currentQuestionIndex < questions.size()) {
+            if (currentQuestionIndex < 10) {
                 predictedDifficulty = adaptiveDifficulty.predictDifficulty(score);
-                question = questionBank
+                List<Question> newQuestions = questionBank
                         .getQuestions()
                         .stream()
                         //to review this - it can take a top hard question difficulty :))
-                        .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
-                        .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
+                        .filter(q -> q.getDifficulty() == predictedDifficulty && !q.isAlreadyAnswered())
+                        .toList();
+
+                Random random = new Random();
+                int number = random.nextInt((newQuestions.size())); // see explanation below
+                question = newQuestions.get(number);
+
+//                question = questionBank
+//                        .getQuestions()
+//                        .stream()
+//                        //to review this - it can take a top hard question difficulty :))
+//                        .filter(q -> q.getDifficulty() >= predictedDifficulty && !q.isAlreadyAnswered())
+//                        .findFirst().orElseThrow(() -> new RuntimeException("Question not found"));
                 loadQuestion();
                 scoringLabel.setText(String.format(scoringTemplate,score, predictedDifficulty, question.getDifficulty()));
             } else {
